@@ -1,0 +1,25 @@
+{
+  "name": "standard-3-person",
+  "description": "标准3人团队工作流",
+  "roles": ["developer", "tester", "reviewer"],
+  "phases": [
+    {
+      "phase": "development",
+      "assignee": "developer",
+      "tasks": ["实现功能"],
+      "duration_estimate": "10-30分钟"
+    },
+    {
+      "phase": "testing",
+      "assignee": "tester",
+      "tasks": ["编写和运行测试"],
+      "duration_estimate": "5-15分钟"
+    },
+    {
+      "phase": "review",
+      "assignee": "reviewer",
+      "tasks": ["代码审查"],
+      "duration_estimate": "5-10分钟"
+    }
+  ]
+}
