@@ -1,0 +1,10 @@
+{
+  "subject": "任务标题",
+  "description": "详细描述...",
+  "activeForm": "正在进行中...",
+  "priority": "high",
+  "owner": null,
+  "status": "pending",
+  "depends_on": [],
+  "blocked_by": []
+}
