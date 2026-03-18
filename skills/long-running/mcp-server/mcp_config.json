@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "long-running": {
+      "command": "/home/zj-normal/.claude/skills/long-running/mcp-server/.venv/bin/python",
+      "args": [
+        "/home/zj-normal/.claude/skills/long-running/mcp-server/server.py",
+        "--mode",
+        "stdio"
+      ],
+      "env": {}
+    }
+  }
+}
