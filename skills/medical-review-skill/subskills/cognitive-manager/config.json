@@ -1,0 +1,46 @@
+{
+    "name": "cognitive-manager",
+    "version": "2.5.1",
+    "description": "认知调度员 - 协调19个模块的协同工作，实现错误自动回溯修正和全局一致性维护",
+    "global_thresholds": {
+        "consistency_score_min": 0.8,
+        "clinical_depth_min": 0.6,
+        "statistical_rigor_min": 0.6,
+        "narrative_flow_min": 0.6,
+        "max_rollback_depth": 3,
+        "human_intervention_threshold": 0.5
+    },
+    "triangular_balance": {
+        "target_values": {
+            "clinical_depth": 0.8,
+            "statistical_rigor": 0.8,
+            "narrative_flow": 0.8
+        },
+        "max_variance": 0.2,
+        "rebalance_trigger_threshold": 0.15
+    },
+    "modules": {
+        "total_count": 19,
+        "core_modules": [
+            "review-worldview",
+            "review-novelty-gate",
+            "literature-search",
+            "literature-screening",
+            "evidence-synthesis",
+            "review-outline",
+            "review-writing",
+            "review-checklist"
+        ],
+        "extraction_modules": [
+            "table-extraction-interactive",
+            "graph-digitization"
+        ],
+        "advanced_modules": [
+            "meta-regression-probe",
+            "multi-model-adversarial",
+            "cross-disciplinary-association",
+            "visual-logic-engine",
+            "cognitive-manager"
+        ]
+    }
+}

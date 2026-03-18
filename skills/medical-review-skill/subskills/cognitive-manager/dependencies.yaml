@@ -1,0 +1,112 @@
+# Cognitive Manager Dependencies
+metadata:
+  schema_version: "1.0"
+  last_updated: "2026-03-13"
+  maintainer: "medical-review-skill"
+
+module_dependencies:
+  review-worldview:
+    inputs: []
+    outputs:
+      - worldview_card
+      - pico_framework
+      - story_line
+    downstream:
+      - review-novelty-gate
+
+  review-novelty-gate:
+    inputs:
+      - worldview_card
+    outputs:
+      - novelty_classification
+      - go_no_go_decision
+    downstream:
+      - literature-search
+    gate: true
+
+  literature-search:
+    inputs:
+      - pico_framework
+    outputs:
+      - search_protocol
+      - search_results
+      - deduplicated_papers
+    downstream:
+      - literature-screening
+
+  literature-screening:
+    inputs:
+      - search_results
+    outputs:
+      - included_papers
+      - excluded_papers
+      - quality_assessment
+      - prisma_flowchart
+    downstream:
+      - table-extraction-interactive
+      - graph-digitization
+      - evidence-synthesis
+
+  table-extraction-interactive:
+    inputs:
+      - included_papers
+    outputs:
+      - extracted_tables
+      - unit_warnings
+      - confidence_scores
+    downstream:
+      - evidence-synthesis
+      - meta-regression-probe
+
+  graph-digitization:
+    inputs:
+      - included_papers
+    outputs:
+      - digitized_data
+      - r_scripts
+      - validation_reports
+    downstream:
+      - meta-regression-probe
+      - evidence-synthesis
+
+  evidence-synthesis:
+    inputs:
+      - extracted_tables
+      - quality_assessment
+      - digitized_data
+    outputs:
+      - evidence_audit_trail
+      - conflict_analysis
+      - synthesis_conclusions
+      - ers_scores
+    downstream:
+      - review-outline
+      - meta-regression-probe
+
+  review-outline:
+    inputs:
+      - synthesis_conclusions
+      - evidence_audit_trail
+    outputs:
+      - review_outline
+      - chapter_structure
+      - figure_plan
+    downstream:
+      - visual-logic-engine
+      - review-writing
+
+  review-writing:
+    inputs:
+      - review_outline
+      - synthesis_conclusions
+      - mechanism_diagrams
+    outputs:
+      - review_draft
+      - reference_list
+    downstream:
+      - multi-model-adversarial
+      - review-checklist
+
+version_compatibility:
+  min_skill_version: "2.5.0"
+  max_skill_version: "2.6.99"
