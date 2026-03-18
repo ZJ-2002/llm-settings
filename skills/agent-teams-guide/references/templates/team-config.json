@@ -1,0 +1,34 @@
+{
+  "team_name": "your-project-name",
+  "description": "项目描述",
+  "created_at": "{{TIMESTAMP}}",
+  "roles": {
+    "developer": {
+      "subagent_type": "general-purpose",
+      "model": "sonnet",
+      "prompt_template": "See role.md#developer",
+      "tools": ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
+    },
+    "tester": {
+      "subagent_type": "general-purpose",
+      "model": "haiku",
+      "prompt_template": "See role.md#tester",
+      "tools": ["Read", "Write", "Bash", "Grep"]
+    },
+    "reviewer": {
+      "subagent_type": "Explore",
+      "model": "sonnet",
+      "prompt_template": "See role.md#reviewer",
+      "tools": ["Read", "Grep", "Glob"]
+    }
+  },
+  "communication_policy": {
+    "default_type": "message",
+    "broadcast_threshold": 3,
+    "shutdown_timeout": 120
+  },
+  "task_policy": {
+    "max_retry": 3,
+    "dependency_check": true
+  }
+}
