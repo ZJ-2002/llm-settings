@@ -1,0 +1,139 @@
+#!/bin/bash
+# ============================================================
+#  Claude Code 自动化循环执行脚本
+#  用法: ./run.sh <次数> [项目目录] [选项]
+#
+#  示例:
+#    ./run.sh 10                          # 当前目录跑 10 轮
+#    ./run.sh 5 /path/to/project          # 指定项目目录跑 5 轮
+# ============================================================
+
+set -uo pipefail
+
+# 检查 python3 是否可用
+if ! command -v python3 &>/dev/null; then
+    echo "错误: 需要 python3，请先安装"
+    exit 1
+fi
+
+# ---- 参数解析 ----
+
+if [ $# -lt 1 ]; then
+    echo "用法: ./run.sh <次数> [项目目录]"
+    echo ""
+    echo "参数:"
+    echo "  <次数>          必填，循环执行的轮次数"
+    echo "  [项目目录]      可选，默认当前目录"
+    exit 1
+fi
+
+ITERATIONS=$1
+shift
+
+# 项目目录（默认当前目录）
+PROJECT_DIR="."
+if [ $# -gt 0 ]; then
+    PROJECT_DIR="$1"
+    shift
+fi
+
+# 解析绝对路径
+PROJECT_DIR=$(cd "$PROJECT_DIR" 2>/dev/null && pwd)
+if [ $? -ne 0 ]; then
+    echo "错误: 项目目录不存在: $PROJECT_DIR"
+    exit 1
+fi
+
+# ---- 日志目录 ----
+
+LOG_DIR="$PROJECT_DIR/.state/logs"
+mkdir -p "$LOG_DIR"
+
+# ---- 启动提示词 ----
+
+STARTUP_PROMPT='你是一个持久化开发代理，正在执行自动化开发流程。
+
+严格按以下步骤执行：
+
+1. 阅读 skill 文件 ~/.claude/skills/long-running/references/infrastructure.md，理解完整工作协议
+2. 检查当前项目的 .state/ 目录：
+   - 如果不存在 → 这是新项目，按初始化协议创建状态文件
+   - 如果存在 → 按恢复协议加载状态，处理可能的中断残留
+3. 从 .state/task-queue.json 选择下一个可执行的任务
+4. 执行任务
+5. 使用原子写入更新 .state/ 文件
+6. git add 修改的文件和 .state/ 目录，然后 git commit
+
+注意：
+- 所有状态文件写入必须使用原子写入协议
+- 每完成一个子步骤就 git commit，不要攒到最后
+- 完成后确保 .state/ 文件和代码变更在同一个 commit 中
+'
+
+# ---- 输出信息 ----
+
+echo "==========================================="
+echo "  Claude Code 自动化循环执行"
+echo "==========================================="
+echo "  计划轮次: $ITERATIONS"
+echo "  项目目录: $PROJECT_DIR"
+echo "  日志目录: $LOG_DIR"
+echo "  开始时间: $(date)"
+echo "==========================================="
+echo ""
+
+# ---- 主循环 ----
+
+COMPLETED=0
+FAILED=0
+
+for i in $(seq 1 "$ITERATIONS"); do
+    echo ""
+    echo "--- 第 $i/$ITERATIONS 轮 ---"
+
+    SESSION_LOG="$LOG_DIR/session-$(date +%Y%m%d_%H%M%S)-$(printf '%03d' "$i").log"
+
+    # 切换到项目目录执行
+    cd "$PROJECT_DIR" || {
+        echo "错误: 无法进入项目目录 $PROJECT_DIR"
+        FAILED=$((FAILED + 1))
+        continue
+    }
+
+    # 执行 Claude Code
+    START_TIME=$(date +%s)
+
+    echo "$STARTUP_PROMPT" | claude -p --dangerously-skip-permissions 2>&1 | tee "$SESSION_LOG"
+    EXIT_CODE=${PIPESTATUS[0]}
+
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+
+    if [ $EXIT_CODE -eq 0 ]; then
+        COMPLETED=$((COMPLETED + 1))
+        echo "第 $i 轮完成 (耗时: ${DURATION}s)"
+    else
+        FAILED=$((FAILED + 1))
+        echo "第 $i 轮失败 (exit: $EXIT_CODE, 耗时: ${DURATION}s)"
+    fi
+
+    # 轮次间等待
+    if [ "$i" -lt "$ITERATIONS" ]; then
+        echo "等待 5s 后开始下一轮..."
+        sleep 5
+    fi
+done
+
+# ---- 执行总结 ----
+
+echo ""
+echo "==========================================="
+echo "  执行总结"
+echo "==========================================="
+echo "  总轮次: $ITERATIONS"
+echo "  实际完成: $COMPLETED 轮"
+echo "  失败: $FAILED 轮"
+echo "  结束时间: $(date)"
+echo "==========================================="
+
+exit $FAILED
