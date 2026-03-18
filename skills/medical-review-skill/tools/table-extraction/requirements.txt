@@ -1,0 +1,71 @@
+# 双轨制表格提取系统依赖
+# 版本: 2.6.1
+
+# ==================== 核心依赖（必须安装）====================
+# 这些依赖是表格提取系统的基础功能所必需的
+
+# 数据处理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# ==================== PDF处理依赖（推荐安装）====================
+# 如需从PDF文件提取表格，请安装以下依赖
+
+# PDF解析
+PyMuPDF>=1.23.0
+
+# 可选：其他PDF解析器
+# pdfplumber>=0.10.0
+# camelot-py>=0.11.0
+
+# ==================== 高级统计功能（可选安装）====================
+# 如需使用v2.6.1新增的中位数转换和敏感性分析功能，请安装
+
+# 统计分析
+scipy>=1.10.0
+
+# 可选：更高级的统计建模
+# statsmodels>=0.14.0
+
+# ==================== OCR增强（可选安装）====================
+# 如需处理扫描版PDF，请安装OCR依赖
+
+# paddlepaddle>=2.5.0
+# paddleocr>=2.7.0
+# pytesseract>=0.3.10
+
+# ==================== 开发依赖（开发者安装）====================
+pytest>=7.4.0
+black>=23.0.0
+mypy>=1.5.0
+
+# ==================== 安装指南 ====================
+# 
+# 1. 最小安装（仅核心功能）
+#    pip install -r requirements.txt --no-deps
+#    pip install pandas numpy
+#
+# 2. 标准安装（推荐，含PDF解析）
+#    pip install -r requirements.txt
+#
+# 3. 完整安装（含所有高级功能）
+#    pip install -r requirements.txt
+#    pip install scipy statsmodels
+#
+# 4. 验证安装
+#    python -c "from core import get_version_info; print(get_version_info())"
+#
+# ==================== 功能可用性矩阵 ====================
+#
+# 模块/功能                    | 最小安装 | 标准安装 | 完整安装
+# ---------------------------|---------|---------|---------
+# HierarchicalHeaderParser   | ✅      | ✅      | ✅
+# FootnoteLinker             | ✅      | ✅      | ✅
+# TableSanitizer             | ✅      | ✅      | ✅
+# HeterogeneityMonitor       | ✅      | ✅      | ✅
+# EnhancedNumericEngine      | ✅      | ✅      | ✅
+# BiasAssessor               | ✅      | ✅      | ✅
+# FinalSynthesizer           | ✅      | ✅      | ✅
+# DualTrackExtractor         | ❌      | ✅      | ✅
+# MedianToMeanConverter      | ❌      | ❌      | ✅
+# SensitivityAnalyzer        | ❌      | ❌      | ✅
